@@ -45,7 +45,49 @@
         {{ content }}
 
       </section>
-
     </div>
+    
+    <nav class="menu-tab">
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/projects">Projects</a></li>
+        <li><a href="/blog">Blog</a></li>
+        <li><a href="/contact">Contact</a></li>
+      </ul>
+    </nav>
+    
+    <style>
+      .menu-tab {
+        position: fixed;
+        top: 10%; /* adjust as needed */
+        left: 0; /* or use "top" and "right" to change placement */
+        background-color: #333;
+        padding: 10px;
+        border-radius: 0 8px 8px 0;
+        box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+      }
+    
+      .menu-tab ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+    
+      .menu-tab li {
+        margin: 10px 0;
+      }
+    
+      .menu-tab a {
+        color: #fff;
+        text-decoration: none;
+        font-weight: bold;
+        transition: color 0.3s ease;
+      }
+    
+      .menu-tab a:hover {
+        color: #1e90ff;
+      }
+    </style>
   </body>
 </html>
