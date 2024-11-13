@@ -50,10 +50,6 @@
     <nav class="menu-tab">
       <ul>
         <li><a href="/">Home</a></li>
-        <li><a href="/about">About</a></li>
-        <li><a href="/projects">Projects</a></li>
-        <li><a href="/blog">Blog</a></li>
-        <li><a href="/contact">Contact</a></li>
         {% assign pages_by_folder = site.pages | group_by_exp: 'page', 'page.path | split: "/" | slice: 1, 1' %}
         {% for folder in pages_by_folder %}
           {% if folder.name == 'pages' %}
