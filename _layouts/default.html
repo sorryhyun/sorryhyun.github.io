@@ -152,7 +152,7 @@
               Generate menu items based on page directories
               Assumes pages are organized under /pages/category/page.html
             {% endcomment %}
-            {% assign pages_in_pages_dir = site.pages | where_exp:"page", "page.path contains '/pages/' and page.layout != 'default'" %}
+            {% assign pages_in_pages_dir = site.pages | where_exp: "page", "page.path contains '/pages/' and page.layout != 'default'" %}
             {% assign categories = pages_in_pages_dir | map: "dir" | uniq | sort %}
             {% for category in categories %}
               {% if category != "/" and category != "/pages/" %}
