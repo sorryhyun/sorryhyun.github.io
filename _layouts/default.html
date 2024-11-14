@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-{% seo %}
+    {% seo %}
     <link rel="stylesheet" href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}">
     <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
     <script src="{{ '/assets/js/respond.js' | relative_url }}"></script>
@@ -16,23 +16,145 @@
     <![endif]-->
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     {% include head-custom.html %}
+    
+    <!-- Include additional styles for the menu -->
+    <style>
+      /* Sidebar Menu Styles */
+      .menu-tab {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 200px; /* Adjust width as needed */
+        height: 100%;
+        background-color: #333;
+        padding-top: 20px;
+        overflow-y: auto;
+        box-shadow: 2px 0 5px rgba(0,0,0,0.5);
+        z-index: 1000;
+      }
+
+      .menu-tab ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .menu-tab li {
+        position: relative;
+      }
+
+      .menu-tab > ul > li {
+        margin: 0;
+      }
+
+      .menu-tab a {
+        display: block;
+        color: #fff;
+        padding: 10px 20px;
+        text-decoration: none;
+        transition: background 0.3s;
+      }
+
+      .menu-tab a:hover {
+        background-color: #575757;
+      }
+
+      /* Submenu Styles */
+      .menu-tab .sub-menu > a::after {
+        content: "▸";
+        position: absolute;
+        right: 20px;
+        transition: transform 0.3s;
+      }
+
+      .menu-tab .sub-menu.open > a::after {
+        transform: rotate(90deg);
+      }
+
+      .menu-tab .sub-menu ul {
+        display: none;
+        background-color: #444;
+      }
+
+      .menu-tab .sub-menu.open ul {
+        display: block;
+      }
+
+      .menu-tab .sub-menu ul li a {
+        padding-left: 40px;
+        background-color: #444;
+      }
+
+      /* Adjust content to accommodate the sidebar */
+      .wrapper {
+        margin-left: 220px; /* Sidebar width + some spacing */
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .menu-tab {
+          width: 100%;
+          height: auto;
+          position: relative;
+        }
+        .wrapper {
+          margin-left: 0;
+        }
+      }
+    </style>
+    
+    <!-- Include additional scripts for menu interaction -->
+    <script>
+      $(document).ready(function(){
+        $('.menu-tab .sub-menu > a').click(function(e){
+          e.preventDefault();
+          $(this).parent().toggleClass('open');
+        });
+      });
+    </script>
   </head>
   <body>
-      <div id="header">
-        <nav>
-          <ul>
-            <li class="fork"><a href="{{ site.github.repository_url }}">View On GitHub</a></li>
-            {% if site.show_downloads %}
-              <li class="downloads"><a href="{{ site.github.zip_url }}">ZIP</a></li>
-              <li class="downloads"><a href="{{ site.github.tar_url }}">TAR</a></li>
-              <li class="title">DOWNLOADS</li>
-            {% endif %}
-          </ul>
-        </nav>
-      </div><!-- end header -->
+    <div id="header">
+      <nav>
+        <ul>
+          <li class="fork"><a href="{{ site.github.repository_url }}">View On GitHub</a></li>
+          {% if site.show_downloads %}
+            <li class="downloads"><a href="{{ site.github.zip_url }}">ZIP</a></li>
+            <li class="downloads"><a href="{{ site.github.tar_url }}">TAR</a></li>
+            <li class="title">DOWNLOADS</li>
+          {% endif %}
+        </ul>
+      </nav>
+    </div><!-- end header -->
+
+    <!-- Sidebar Menu -->
+    <nav class="menu-tab">
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/pages">Posts</a></li>
+        {% comment %}
+          Generate menu items based on page directories
+          Assumes pages are organized under /pages/category/page.html
+        {% endcomment %}
+        {% assign categories = site.pages | where: "path", "contains", "/pages/" | map: "dir" | uniq | sort %}
+        {% for category in categories %}
+          {% if category != "/" and category != "/pages/" %}
+            {% assign category_name = category | remove_first: "/" | remove_last: "/" | replace: "-", " " | capitalize %}
+            <li class="sub-menu">
+              <a href="#">{{ category_name }}</a>
+              <ul>
+                {% assign sub_pages = site.pages | where: "dir", category %}
+                {% for page in sub_pages %}
+                  <li><a href="{{ page.url }}">{{ page.title }}</a></li>
+                {% endfor %}
+              </ul>
+            </li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </nav><!-- end menu-tab -->
 
     <div class="wrapper">
-
       <section>
         <div id="title">
           <h1>{{ site.title | default: site.github.repository_name }}</h1>
@@ -46,71 +168,6 @@
 
       </section>
     </div>
-
-    <nav class="menu-tab">
-      <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href="/pages">Posts</a></li>
-        {% for page in site.pages %}
-          {% if page.path contains '/pages/' and page.title %}
-            {% assign parts = page.path | split: '/' %}
-            {% if parts.size > 0 %}
-              <li class="sub-menu">
-                <a href="#">{{ parts[2] | capitalize }}</a>
-                <ul>
-                  <li><a href="{{ page.url }}">{{ page.title }}</a></li>
-                </ul>
-              </li>
-            {% else %}
-              <li><a href="{{ page.url }}">{{ page.title }}</a></li>
-            {% endif %}
-          {% endif %}
-        {% endfor %}
-      </ul>
-    </nav>
-    
-    <style>
-      .menu-tab {
-        position: fixed;
-        top: 10%; /* adjust as needed */
-        left: 0; /* or use "top" and "right" to change placement */
-        background-color: #333;
-        padding: 10px;
-        border-radius: 0 8px 8px 0;
-        box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
-      }
-    
-      .menu-tab ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-      }
-    
-      .menu-tab li {
-        margin: 10px 0;
-      }
-    
-      .menu-tab li .sub-menu ul {
-        display: none;
-        margin-left: 15px;
-      }
-    
-      .menu-tab li .sub-menu:hover ul {
-        display: block;
-      }
-    
-      .menu-tab a {
-        color: #fff;
-        text-decoration: none;
-        font-weight: bold;
-        transition: color 0.3s ease;
-      }
-    
-      .menu-tab a:hover {
-        color: #1e90ff;
-      }
-    </style>
-
 
   </body>
 </html>
