@@ -136,14 +136,15 @@
           Generate menu items based on page directories
           Assumes pages are organized under /pages/category/page.html
         {% endcomment %}
-        {% assign categories = site.pages | where: "path", "contains", "/pages/" | map: "dir" | uniq | sort %}
+        {% assign pages_in_pages_dir = site.pages | where_exp:"page", "page.path contains '/pages/'" %}
+        {% assign categories = pages_in_pages_dir | map: "dir" | uniq | sort %}
         {% for category in categories %}
           {% if category != "/" and category != "/pages/" %}
             {% assign category_name = category | remove_first: "/" | remove_last: "/" | replace: "-", " " | capitalize %}
             <li class="sub-menu">
               <a href="#">{{ category_name }}</a>
               <ul>
-                {% assign sub_pages = site.pages | where: "dir", category %}
+                {% assign sub_pages = site.pages | where_exp:"page", "page.dir == category" %}
                 {% for page in sub_pages %}
                   <li><a href="{{ page.url }}">{{ page.title }}</a></li>
                 {% endfor %}
