@@ -24,7 +24,7 @@
         position: fixed;
         top: 0;
         left: 0;
-        width: 200px; /* Adjust width as needed */
+        width: 220px; /* Adjust width as needed */
         height: 100%;
         background-color: #333;
         padding-top: 20px;
@@ -53,8 +53,11 @@
         padding: 10px 20px;
         text-decoration: none;
         transition: background 0.3s;
+        cursor: pointer;
       }
-
+      .menu-tab a.active {
+        background-color: #1e90ff;
+      }
       .menu-tab a:hover {
         background-color: #575757;
       }
@@ -66,18 +69,28 @@
         right: 20px;
         transition: transform 0.3s;
       }
-
+      
+      .menu-tab .sub-menu ul {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+      }
+      
       .menu-tab .sub-menu.open > a::after {
         transform: rotate(90deg);
       }
 
       .menu-tab .sub-menu ul {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
         display: none;
         background-color: #444;
       }
 
       .menu-tab .sub-menu.open ul {
-        display: block;
+        max-height: 500px; /* Adjust as needed */
+        transition: max-height 0.5s ease-in;
       }
 
       .menu-tab .sub-menu ul li a {
@@ -87,7 +100,8 @@
 
       /* Adjust content to accommodate the sidebar */
       .wrapper {
-        margin-left: 220px; /* Sidebar width + some spacing */
+        margin-left: 240px; /* Sidebar width + some spacing */
+        padding: 20px;
       }
 
       /* Responsive Design */
@@ -106,9 +120,17 @@
     <!-- Include additional scripts for menu interaction -->
     <script>
       $(document).ready(function(){
+        // Toggle submenus on click
         $('.menu-tab .sub-menu > a').click(function(e){
           e.preventDefault();
           $(this).parent().toggleClass('open');
+        });
+
+        // Optionally, close other open submenus when one is opened
+        $('.menu-tab .sub-menu > a').click(function(e){
+          e.preventDefault();
+          var parent = $(this).parent();
+          $('.menu-tab .sub-menu').not(parent).removeClass('open');
         });
       });
     </script>
@@ -131,27 +153,31 @@
     <nav class="menu-tab">
       <ul>
         <li><a href="/">Home</a></li>
-        <li><a href="/pages">Posts</a></li>
-        {% comment %}
-          Generate menu items based on page directories
-          Assumes pages are organized under /pages/category/page.html
-        {% endcomment %}
-        {% assign pages_in_pages_dir = site.pages | where_exp:"page", "page.path contains '/pages/'" %}
-        {% assign categories = pages_in_pages_dir | map: "dir" | uniq | sort %}
-        {% for category in categories %}
-          {% if category != "/" and category != "/pages/" %}
-            {% assign category_name = category | remove_first: "/" | remove_last: "/" | replace: "-", " " | capitalize %}
-            <li class="sub-menu">
-              <a href="#">{{ category_name }}</a>
-              <ul>
-                {% assign sub_pages = site.pages | where_exp:"page", "page.dir == category" %}
-                {% for page in sub_pages %}
-                  <li><a href="{{ page.url }}">{{ page.title }}</a></li>
-                {% endfor %}
-              </ul>
-            </li>
-          {% endif %}
-        {% endfor %}
+        <li class="sub-menu">
+          <a href="javascript:void(0);">Posts</a> <!-- Non-clickable toggle -->
+          <ul>
+            {% comment %}
+              Generate menu items based on page directories
+              Assumes pages are organized under /pages/category/page.html
+            {% endcomment %}
+            {% assign pages_in_pages_dir = site.pages | where_exp:"page", "page.path contains '/pages/' and page.layout != 'default'" %}
+            {% assign categories = pages_in_pages_dir | map: "dir" | uniq | sort %}
+            {% for category in categories %}
+              {% if category != "/" and category != "/pages/" %}
+                {% assign category_name = category | remove_first: "/" | remove_last: "/" | replace: "-", " " | capitalize %}
+                <li class="category">
+                  <a href="javascript:void(0);">{{ category_name }}</a>
+                  <ul>
+                    {% assign sub_pages = site.pages | where_exp:"page", "page.dir == category" | sort: 'title' %}
+                    {% for page in sub_pages %}
+                      <li><a href="{{ page.url }}">{{ page.title }}</a></li>
+                    {% endfor %}
+                  </ul>
+                </li>
+            {% endif %}
+            {% endfor %}
+          </ul>
+        </li>
       </ul>
     </nav><!-- end menu-tab -->
 
