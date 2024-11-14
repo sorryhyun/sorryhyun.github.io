@@ -50,27 +50,23 @@
     <nav class="menu-tab">
       <ul>
         <li><a href="/">Home</a></li>
-        {% assign pages_by_folder = site.pages | group_by_exp: 'page', 'page.path | split: "/" | slice: 1, 1' %}
-        {% for folder in pages_by_folder %}
-          {% if folder.name == 'pages' %}
-            {% for page in folder.items %}
-              {% assign parts = page.path | split: '/' %}
-              {% if parts.size > 2 %}
-                {% assign parent_folder = parts[2] %}
-                <li class="sub-menu">
-                  <a href="#">{{ parent_folder | capitalize }}</a>
-                  <ul>
-                    {% for sub_page in folder.items %}
-                      {% if sub_page.path contains parent_folder %}
-                        <li><a href="{{ sub_page.url }}">{{ sub_page.title }}</a></li>
-                      {% endif %}
-                    {% endfor %}
-                  </ul>
-                </li>
-              {% else %}
-                <li><a href="{{ page.url }}">{{ page.title }}</a></li>
-              {% endif %}
-            {% endfor %}
+        <li><a href="/about">About</a></li>
+        <li><a href="/projects">Projects</a></li>
+        <li><a href="/blog">Blog</a></li>
+        <li><a href="/contact">Contact</a></li>
+        {% for page in site.pages %}
+          {% if page.path contains '/pages/' and page.title %}
+            {% assign parts = page.path | split: '/' %}
+            {% if parts.size > 3 %}
+              <li class="sub-menu">
+                <a href="#">{{ parts[2] | capitalize }}</a>
+                <ul>
+                  <li><a href="{{ page.url }}">{{ page.title }}</a></li>
+                </ul>
+              </li>
+            {% else %}
+              <li><a href="{{ page.url }}">{{ page.title }}</a></li>
+            {% endif %}
           {% endif %}
         {% endfor %}
       </ul>
