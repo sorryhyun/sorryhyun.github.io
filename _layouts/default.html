@@ -54,7 +54,7 @@
         {% for page in site.pages %}
           {% if page.path contains '/pages/' and page.title %}
             {% assign parts = page.path | split: '/' %}
-            {% if parts.size > 3 %}
+            {% if parts.size > 0 %}
               <li class="sub-menu">
                 <a href="#">{{ parts[2] | capitalize }}</a>
                 <ul>
